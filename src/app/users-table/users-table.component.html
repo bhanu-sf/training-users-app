@@ -1,0 +1,83 @@
+<div style="padding: 0.5rem 0.5rem;">
+  <button (click)="fetchData()">
+    {{ dataFetched ? 'Refresh data' : 'Load data'}}
+  </button>
+</div>
+
+<table id="users">
+  <colgroup>
+    <col style="width: 7%;" />
+    <col style="width: 10%;" />
+    <col style="width: 10%;" />
+    <col style="width: 15%;" />
+    <col style="width: 10%;" />
+    <col style="width: auto;" />
+    <col style="width: auto;" />
+    <col style="width: 15%;" />
+  </colgroup>
+
+  <thead>
+    <tr>
+      <th>First name</th>
+      <th>Middle name</th>
+      <th>Last name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Role</th>
+      <th>Address</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+
+  <tbody *ngFor="let user of users; index as i">
+    <tr *ngIf="!user.isEditing">
+      <td>{{user.firstName}}</td>
+      <td>{{user.middleName}}</td>
+      <td>{{user.lastName}}</td>
+      <td>{{user.email}}</td>
+      <td>{{user.phone}}</td>
+      <td>{{user.role}}</td>
+      <td>{{user.address}}</td>
+      <td>
+        <span *ngIf="!user.isEditing">
+          <button (click)="editUser(i)">Edit</button>
+          <button (click)="deleteUser(i)">Delete</button>
+        </span>
+      </td>
+    </tr>
+
+    <tr *ngIf="user.isEditing && user.edited">
+      <td>
+        <input [(ngModel)]="user.edited.firstName">
+      </td>
+      <td>
+        <input [(ngModel)]="user.edited.middleName">
+      </td>
+      <td>
+        <input [(ngModel)]="user.edited.lastName">
+      </td>
+      <td>
+        <input [(ngModel)]="user.edited.email">
+      </td>
+      <td>
+        <input [(ngModel)]="user.edited.phone">
+      </td>
+      <td>
+        <select [(ngModel)]="user.edited.role">
+          <option value="SuperAdmin">SuperAdmin</option>
+          <option value="Admin">Admin</option>
+          <option value="Subscriber">Subscriber</option>
+        </select>
+      </td>
+      <td>
+        <input [(ngModel)]="user.edited.address">
+      </td>
+      <td>
+        <span *ngIf="user.isEditing">
+          <button (click)="saveUser(i)">Save</button>
+          <button (click)="cancelEdit(i)">Cancel</button>
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
