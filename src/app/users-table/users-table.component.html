@@ -29,7 +29,7 @@
     </tr>
   </thead>
 
-  <tbody *ngFor="let user of users; index as i">
+  <tbody *ngFor="let user of users.getAll(); index as i">
     <tr *ngIf="!user.isEditing">
       <td>{{user.firstName}}</td>
       <td>{{user.middleName}}</td>

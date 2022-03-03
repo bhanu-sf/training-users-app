@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { GenericStore } from './generic-store';
 import { USERS } from './mock-users';
-import { User } from './user';
-import { UserRow } from './user-row';
+import { IUser, User } from './user';
 
 @Component({
   selector: 'users-table',
@@ -11,56 +11,61 @@ import { UserRow } from './user-row';
 
 export class UsersTableComponent {
   dataFetched = false;
-  users: UserRow[] = [];
+  users = new GenericStore<User>();
 
   fetchData() {
-    this.users = USERS.map(user => {
-      return {
-        ...user,
-        isEditing: false
-      }
-    });
+    this.users.addAllItems(USERS.map((user, idx) => {
+      return new User(
+        idx,
+        user.firstName,
+        user.middleName,
+        user.lastName,
+        user.email,
+        user.role,
+        user.phone,
+        user.address,
+      )
+    }));
     this.dataFetched = true;
   }
 
   editUser(idx: number) {
-    this.users[idx].isEditing = true;
-    this.users[idx].edited = {
-      ...this.users[idx]
-    }
+    this.users.getById(idx)?.setEditing();
   }
 
   cancelEdit(idx: number) {
-    this.users[idx].isEditing = false;
+    this.users.getById(idx)?.cancelEditing();
   }
   
   saveUser(idx: number) {
     try {
-      this.#validateUser(this.users[idx].edited);
-      this.users[idx] = {
-        ...this.users[idx].edited,
-        isEditing: false,
-        edited: null,
+      const updatedUser = this.users.getById(idx)?.edited;
+      this.#validateUser(updatedUser);
+      
+      if (!updatedUser) {
+        throw new Error('Cannot find user')
       }
+      
+      this.users.updateItem(idx, User.updateUser(idx, updatedUser))
     } catch(err: any) {
       alert(err.message);
     }  
   }
 
   deleteUser(idx: number) {
-    this.users.splice(idx, 1);
+    this.users.removeItem(idx);
   }
 
-  #validateUser(user: User) {
-    if (!user.firstName) {
+  #validateUser(user: IUser | undefined) {
+    if (!user?.firstName) {
       throw new Error('First name is required')
     }
 
-    if (!user.email) {
+    if (!user?.email) {
       throw new Error('Email is required')
     }
 
-    if (!user.role) {
+    if (!user?.role) {
       throw new Error('Role is required')
     }
   }
