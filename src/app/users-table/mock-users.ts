@@ -1,6 +1,6 @@
 import {  Role, IUser } from './user';
 
-export const USERS: IUser[] = [
+export const USERS = [
   {
     firstName: 'Mr',
     middleName: 'Art',

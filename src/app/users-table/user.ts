@@ -1,3 +1,5 @@
+import { DateTimeFormatter } from "../decorators/date-time-formatter";
+
 export enum Role {
   SuperAdmin = 'SuperAdmin',
   Admin = 'Admin',
@@ -5,6 +7,7 @@ export enum Role {
 }
 
 export interface IUser {
+  id: number;
   firstName: string;
   middleName: string;
   lastName: string;
@@ -15,46 +18,42 @@ export interface IUser {
 }
 
 export class User {
+  id: number;
+  firstName: string;
+  middleName?: string;
+  lastName?: string;
+  email: string;
+  role: Role;
+  phone?: string;
+  address?: string;
   isEditing: boolean;
-  edited?: IUser;
+  edited?: any;
+
+  @DateTimeFormatter()
   createdAt: Date;
+
   updatedAt: Date;
 
-  constructor(
-    public id: number,
-    public firstName: string,
-    public middleName: string,
-    public lastName: string,
-    public email: string,
-    public role: Role,
-    public phone: string,
-    public address: string
-  ) {
+  constructor(user: IUser) {
+    this.id = user.id;
+    this.firstName = user.firstName;
+    this.middleName = user.middleName;
+    this.lastName = user.lastName;
+    this.phone = user.phone;
+    this.email = user.email;
+    this.address = user.address;
+    this.role = user.role;
     this.isEditing = false;
     this.createdAt = new Date();
     this.updatedAt = new Date();
   }
 
   setEditing() {
-    let { isEditing, edited, createdAt, updatedAt, ...rest } = this;
-    this.edited = rest;
+    this.edited = this;
     this.isEditing = true;
   }
 
   cancelEditing() {
     this.isEditing = false;
-  }
-
-  static updateUser(id: number, user: IUser): User {
-    return new User(
-      id,
-      user.firstName,
-      user.middleName,
-      user.lastName,
-      user.email,
-      user.role,
-      user.phone,
-      user.address,
-    )
   }
 }

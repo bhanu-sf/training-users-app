@@ -15,17 +15,18 @@ export class UsersTableComponent {
 
   fetchData() {
     this.users.addAllItems(USERS.map((user, idx) => {
-      return new User(
-        idx,
-        user.firstName,
-        user.middleName,
-        user.lastName,
-        user.email,
-        user.role,
-        user.phone,
-        user.address,
-      )
+      return new User({
+        id: idx,
+        firstName: user.firstName,
+        middleName: user.middleName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        role: user.role
+      })
     }));
+    console.log(this.users.getAll())
     this.dataFetched = true;
   }
 
@@ -39,14 +40,17 @@ export class UsersTableComponent {
   
   saveUser(idx: number) {
     try {
-      const updatedUser = this.users.getById(idx)?.edited;
+      const updatedUser = this.users.getById(idx)?.edited;      
       this.#validateUser(updatedUser);
-      
+  
       if (!updatedUser) {
         throw new Error('Cannot find user')
       }
+
+      let user = new User(updatedUser);
+      user.updatedAt = new Date();
       
-      this.users.updateItem(idx, User.updateUser(idx, updatedUser))
+      this.users.updateItem(idx, user)
     } catch(err: any) {
       alert(err.message);
     }  

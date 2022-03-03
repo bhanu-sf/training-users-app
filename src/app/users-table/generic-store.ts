@@ -32,3 +32,4 @@ export class GenericStore<T extends MustHaveFields> {
     this.items.splice(id, 1);
   }
 }
+
